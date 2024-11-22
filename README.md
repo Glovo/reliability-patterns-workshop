@@ -1,2 +1,1 @@
-About
-Repository for reliability pattners workshop presented by Pol and Javier at UAB
+Repository for reliability patterns workshop presented by Pol and Javier at UAB
