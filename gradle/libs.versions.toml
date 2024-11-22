@@ -1,0 +1,13 @@
+[versions]
+junit-jupiter = "5.10.3"
+wiremock = "3.9.2"
+jackson = "2.0.1"
+
+[libraries]
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
+wiremock = { module = "org.wiremock:wiremock", version.ref = "wiremock" }
+jackson = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "2.0.0" }
