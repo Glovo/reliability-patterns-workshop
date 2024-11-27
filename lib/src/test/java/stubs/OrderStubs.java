@@ -88,6 +88,17 @@ public class OrderStubs {
         );
     }
 
+    public static void ordersStubErrorFallback(String uri) {
+        stubFor(
+                get(urlEqualTo(uri))
+                        .willReturn(
+                                aResponse()
+                                        .withHeader("Content-Type", "application/json")
+                                        .withStatus(500) // Internal Server Error
+                        )
+        );
+    }
+
     // Helper method for Jackson serialization
     private static String encodeToString(Object obj) {
         try {
