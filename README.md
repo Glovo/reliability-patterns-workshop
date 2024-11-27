@@ -52,6 +52,16 @@ Once you are ready to test your implementation you just need to run the tests in
 When the tests are executed, a local HTTP server is started to simulate the `GET /orders`
 endpoint from the Orders service.
 
+#### Hints
+
+In case that you need some help to start, you can take a look at [ExampleOrdersClient](./lib/src/main/java/stability/ExampleOrdersClient.java)
+to see how to fetch and deserialize the list of orders from the orders service.
+
+Some other Java types that can help you to implement the reliability patterns are listed below:
+
+* [Future](https://docs.oracle.com/javase/8/docs/api/?java/util/concurrent/Future.html)
+* [ExecutorService](https://www.baeldung.com/java-executor-service-tutorial)
+
 ### Next steps
 
 Congratulations! Your tests pass which means that you have successfully implemented 
