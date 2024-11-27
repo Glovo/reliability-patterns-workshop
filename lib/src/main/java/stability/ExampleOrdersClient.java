@@ -33,7 +33,7 @@ public class ExampleOrdersClient implements OrdersFetcher {
     }
 
     @Override
-    public List<Order> fetchOrdersWithFallback() {
+    public List<Order> fetchOrdersWithFallback(List<Order> orders) {
         return List.of();
     }
 

@@ -3,9 +3,13 @@ package stability;
 import java.util.List;
 
 public class Order {
-    private final long id;
-    private final List<Item> items;
-    private final long userId;
+    private long id;
+    private List<Item> items;
+    private long userId;
+
+    public Order() {
+
+    }
 
     public Order(long id, List<Item> items, long userId) {
         this.id = id;

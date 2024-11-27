@@ -1,9 +1,12 @@
 package stability;
 
 public class Item {
-    private final long id;
-    private final String name;
-    private final int quantity;
+    private long id;
+    private String name;
+    private int quantity;
+
+    public Item() {
+    }
 
     public Item(long id, String name, int quantity) {
         this.id = id;

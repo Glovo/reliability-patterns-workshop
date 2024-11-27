@@ -1,5 +1,6 @@
 package stability;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,11 +21,10 @@ import java.util.concurrent.TimeUnit;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.workshop.stability.stubs.OrderStubs.ordersStubWithHighLatency;
 
 @WireMockTest
@@ -93,7 +93,7 @@ public class ReliableOrdersClientTest {
 
         // then
         assertEquals(3, orders.size());
-        verify(getRequestedFor(urlEqualTo(ORDERS_URI)), times(5));
+        verify(5, getRequestedFor(urlEqualTo(ORDERS_URI)));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class ReliableOrdersClientTest {
         // then
         assertEquals(ordersCount, orders.size());
         assertTrue(fetchMethodCallsCounter > 10);
-        verify(getRequestedFor(urlEqualTo(ORDERS_URI)), times(5));
+        verify(5, getRequestedFor(urlEqualTo(ORDERS_URI)));
     }
 
     public static <T> T withTimeout(Callable<T> task, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, java.util.concurrent.TimeoutException {
