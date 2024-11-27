@@ -11,6 +11,7 @@ import stability.exceptions.CircuitOpenException;
 import stability.exceptions.TimeoutException;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,6 +50,20 @@ public class ReliableOrdersClientTest {
 
         // then
         assertEquals(3, orders.size());
+        verify(getRequestedFor(urlEqualTo(ORDERS_URI)));
+    }
+
+    @Test
+    public void fetchOrdersWithFallbackReturnTheListOfOrders() throws Exception {
+        // given
+        OrderStubs.ordersStubErrorFallback(ORDERS_URI);
+
+        // when
+        List<Order> ordersFallback =  asList(new Order(1, Collections.emptyList(), 3), new Order(2, Collections.emptyList(), 3));
+        List<Order> orders = ordersFetcher.fetchOrdersWithFallback(ordersFallback);
+
+        // then
+        assertEquals(2, orders.size());
         verify(getRequestedFor(urlEqualTo(ORDERS_URI)));
     }
 
