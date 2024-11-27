@@ -19,7 +19,8 @@ public class ReliableOrdersFetcher implements OrdersFetcher {
     }
 
     @Override
-    public List<Order> fetchOrdersWithFallback() {
+    public List<Order> fetchOrdersWithFallback(List<Order> ordersFallback)
+        throws InterruptedException {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
