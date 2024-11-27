@@ -125,7 +125,6 @@ public class ReliableOrdersClientTest {
 
         // then
         assertEquals(ordersCount, orders.size());
-        System.out.println(fetchMethodCallsCounter);
         assertTrue(fetchMethodCallsCounter > 10);
         verify(6, getRequestedFor(urlEqualTo(ORDERS_URI)));
     }
