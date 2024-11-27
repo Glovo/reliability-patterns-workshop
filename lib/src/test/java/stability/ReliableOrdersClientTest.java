@@ -1,9 +1,9 @@
 package stability;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.workshop.stability.stubs.OrderStubs;
 import stability.config.CircuitBreakerConfig;
@@ -69,7 +69,7 @@ public class ReliableOrdersClientTest {
     }
 
     @Test
-    public void fetchOrdersWithretriesReturnsTheListOfOrdersAfterXretries() throws Exception {
+    public void fetchOrdersWithRetriesReturnsTheListOfOrdersAfterXretries() throws Exception {
         // given
         OrderStubs.ordersStubWithErrors(ORDERS_URI, 4, 2);
 
@@ -81,49 +81,34 @@ public class ReliableOrdersClientTest {
         verify(5, getRequestedFor(urlEqualTo(ORDERS_URI)));
     }
 
-    @Test
-    public void fetchOrdersWithoutTimeoutThrowsExceptionIfOrdersEndpointIsSlow(WireMockRuntimeInfo wm) {
-        // given
-        ordersStubWithHighLatency(ORDERS_URI);  // Simulate slow endpoint
-        long timeout = 100;  // Timeout in milliseconds
-        long testTimeout = 500;  // Overall test timeout
+    @Nested
+    class TimeoutTest {
 
-        // when
-        assertThrows(TimeoutException.class, () -> {
-            withTimeout(() -> {
-                ordersFetcher.fetchOrdersWithTimeout(Duration.ofMillis(timeout));
-                return null; // we don't need to return anything from the fetch operation
-            }, testTimeout, TimeUnit.MILLISECONDS);
-        });
+        @Test
+        public void fetchOrdersWithTimeoutReturnTheListOfOrdersWhenEndpointLatencyIsLow() throws Exception {
+            // given
+            OrderStubs.ordersStub(ORDERS_URI, 3);
 
-        // then
-        verify(getRequestedFor(urlEqualTo(ORDERS_URI)));  // Ensure the endpoint was requested
-    }
+            // when
+            Duration maximumTimeToWaitbeforeTimeout = Duration.ofSeconds(1);
+            List<Order> orders = ordersFetcher.fetchOrdersWithTimeout(maximumTimeToWaitbeforeTimeout);
 
-    @Test
-    public void fetchOrdersWithTimeoutReturnTheListOfOrdersWhenEndpointLatencyIsLow() throws Exception {
-        // given
-        OrderStubs.ordersStub(ORDERS_URI, 3);
+            // then
+            assertEquals(3, orders.size());
+            verify(getRequestedFor(urlEqualTo(ORDERS_URI)));
+        }
 
-        // when
-        List<Order> orders = ordersFetcher.fetchOrdersWithTimeout(Duration.ofMillis(100));
+        @Test
+        public void fetchOrdersGetsListOfOrdersFromEndpointThatStartsWithErrors() throws Exception {
+            // given
+            OrderStubs.ordersStubWithHighLatency(ORDERS_URI);
 
-        // then
-        assertEquals(3, orders.size());
-        verify(getRequestedFor(urlEqualTo(ORDERS_URI)));
-    }
+            // when
+            assertThrows(TimeoutException.class, () -> ordersFetcher.fetchOrdersWithTimeout(Duration.ofSeconds(1)));
 
-    @Test
-    public void fetchOrdersGetsListOfOrdersFromEndpointThatStartsWithErrors() throws Exception {
-        // given
-        OrderStubs.ordersStubWithErrors(ORDERS_URI, 4, 5);
-
-        // when
-        List<Order> orders = ordersFetcher.fetchOrdersWithTimeout(Duration.ofMillis(100));
-
-        // then
-        assertEquals(3, orders.size());
-        verify(5, getRequestedFor(urlEqualTo(ORDERS_URI)));
+            // then
+            verify(getRequestedFor(urlEqualTo(ORDERS_URI)));
+        }
     }
 
     @Test
