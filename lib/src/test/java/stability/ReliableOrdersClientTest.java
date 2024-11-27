@@ -116,7 +116,7 @@ public class ReliableOrdersClientTest {
         while (true) {
             try {
                 fetchMethodCallsCounter++;
-                orders = ordersFetcher.fetchOrdersWithCircuitBreaker(new CircuitBreakerConfig(2, Duration.ofSeconds(10)));
+                orders = ordersFetcher.fetchOrdersWithCircuitBreaker(new CircuitBreakerConfig(2, Duration.ofMillis(500)));
                 break;
             } catch (Exception e) {
                 // keep iterating
@@ -125,8 +125,9 @@ public class ReliableOrdersClientTest {
 
         // then
         assertEquals(ordersCount, orders.size());
+        System.out.println(fetchMethodCallsCounter);
         assertTrue(fetchMethodCallsCounter > 10);
-        verify(5, getRequestedFor(urlEqualTo(ORDERS_URI)));
+        verify(6, getRequestedFor(urlEqualTo(ORDERS_URI)));
     }
 
 }
