@@ -17,7 +17,7 @@ reliability fetch orders from the orders service. The client could be the Custom
 which would need to fetch the list of orders for a customer in order to display
 it as part of the customer profile. 
 
-[](./img/scneario.png =250x)
+![](./img/scenario.png | width=100)
 
 
 To implement these patterns you will need to implement the methods from the 
