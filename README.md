@@ -48,7 +48,7 @@ You just need to add the implementation of each reliability pattern in the corre
 method. Use the `url` field to send the GET request to fetch the list of Orders.
 
 Once you are ready to test your implementation you just need to run the tests in 
-[ReliableOrdersClientTest](./lib/src/main/java/stability/ReliableOrdersClientTest.java).
+[ReliableOrdersClientTest](./lib/src/test/java/stability/ReliableOrdersClientTest.java).
 When the tests are executed, a local HTTP server is started to simulate the `GET /orders`
 endpoint from the Orders service.
 
