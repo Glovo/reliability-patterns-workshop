@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.workshop.stability.stubs.OrderStubs;
 import stability.config.CircuitBreakerConfig;
+import stability.config.ExponentialBackoffConfig;
 import stability.exceptions.CircuitOpenException;
 import stability.exceptions.TimeoutException;
 
@@ -65,6 +66,19 @@ public class ReliableOrdersClientTest {
         // then
         assertEquals(2, orders.size());
         verify(getRequestedFor(urlEqualTo(ORDERS_URI)));
+    }
+
+    @Test
+    public void fetchOrdersWithretriesReturnsTheListOfOrdersAfterXretries() throws Exception {
+        // given
+        OrderStubs.ordersStubWithErrors(ORDERS_URI, 4, 2);
+
+        // when
+        List<Order> orders = ordersFetcher.fetchOrdersWithRetries(5, new ExponentialBackoffConfig(Duration.ofMillis(100), 2, Duration.ofSeconds(1)));
+
+        // then
+        assertEquals(2, orders.size());
+        verify(5, getRequestedFor(urlEqualTo(ORDERS_URI)));
     }
 
     @Test
