@@ -19,12 +19,46 @@ it as part of the customer profile.
 
 <img src="./img/scenario.png" width="500"/>
 
+### Dev setup
+
+First of all you need to download the workshop repo by running: 
+
+```shell
+git clone git@github.com:Glovo/reliability-patterns-workshop.git
+```
+
+The recommended way to follow this workshop is by using the [IntelliJ IDE](https://www.jetbrains.com/idea/).
+You can download it from [this link](https://www.jetbrains.com/idea/download/). Make sure to download
+the **community** edition to avoid issues with the paid version license. 
+
+Once you have Intellij installed in your laptop you should be able to open the project by clicking on
+Open. Then, you will need to find the directory where you cloned the repo and select the repository folder.
+
+Wait some time until the project is loaded. Now you are ready to start implementing the reliability 
+patterns!
+
+If you have any problem let Javi or Pol know. 
+
+### Implementation
 
 To implement these patterns you will need to implement the methods from the 
 [OrdersFetcher](./lib/src/main/java/stability/OrdersFetcher.java) interface using 
 the [ReliableOrdersFetcher](./lib/src/main/java/stability/ReliableOrdersFetcher.java) class.
-You will need to provide a reliable implementation 
+You just need to add the implementation of each reliability pattern in the corresponding
+method. Use the `url` field to send the GET request to fetch the list of Orders.
 
+Once you are ready to test your implementation you just need to run the tests in 
+[ReliableOrdersClientTest](./lib/src/main/java/stability/ReliableOrdersClientTest.java).
+When the tests are executed, a local HTTP server is started to simulate the `GET /orders`
+endpoint from the Orders service.
 
+### Next steps
 
+Congratulations! Your tests pass which means that you have successfully implemented 
+the reliability patterns. If you want to see how a real implementation for these patterns
+looks like, you can try to replace your implementation with the [Resilience4J](https://resilience4j.readme.io/docs/getting-started)
+library. 
 
+[Here](https://resilience4j.readme.io/docs/gradle) you can find how to add the library to the project.
+This is a library we are currently using at Glovo, so you could learn how a production ready
+reliability implementation looks like.
