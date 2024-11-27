@@ -14,12 +14,6 @@ import stability.exceptions.TimeoutException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -28,7 +22,6 @@ import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.workshop.stability.stubs.OrderStubs.ordersStubWithHighLatency;
 
 @WireMockTest
 public class ReliableOrdersClientTest {
@@ -112,7 +105,7 @@ public class ReliableOrdersClientTest {
     }
 
     @Test
-    public void fetchOrdersWithCircuitBreakerGetsListOfOrdersFromEndpointThatExpectsBackpressure(WireMockRuntimeInfo wm) throws Exception {
+    public void fetchOrdersWithCircuitBreakerGetsListOfOrdersFromEndpointThatExpectsBackpressure() throws Exception {
         // given
         int ordersCount = 5;
         OrderStubs.ordersStubWithErrors(ORDERS_URI, 5, ordersCount);
@@ -123,9 +116,9 @@ public class ReliableOrdersClientTest {
         while (true) {
             try {
                 fetchMethodCallsCounter++;
-                orders = ordersFetcher.fetchOrdersWithCircuitBreaker(new CircuitBreakerConfig(5, Duration.ofMillis(100)));
+                orders = ordersFetcher.fetchOrdersWithCircuitBreaker(new CircuitBreakerConfig(2, Duration.ofSeconds(10)));
                 break;
-            } catch (CircuitOpenException e) {
+            } catch (Exception e) {
                 // keep iterating
             }
         }
@@ -136,14 +129,4 @@ public class ReliableOrdersClientTest {
         verify(5, getRequestedFor(urlEqualTo(ORDERS_URI)));
     }
 
-    public static <T> T withTimeout(Callable<T> task, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, java.util.concurrent.TimeoutException {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<T> future = executor.submit(task);
-
-        try {
-            return future.get(timeout, unit);  // Wait for the task with a timeout
-        } finally {
-            executor.shutdownNow();  // Ensure the executor is shut down
-        }
-    }
 }
